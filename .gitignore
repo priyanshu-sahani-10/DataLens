@@ -1,0 +1,23 @@
+# Next.js
+frontend/.next
+frontend/node_modules
+
+# FastAPI
+backend/__pycache__
+backend/.venv
+backend/venv
+backend/*.pyc
+
+# Environment files
+.env
+.env.local
+backend/.env
+frontend/.env.local
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,0 +1,103 @@
+      {/* Input Section
+    <div className="dark bg-black h-fit text-white flex  justify-center p-6 pb-20 sm:pb-40">
+      <Card className="w-full max-w-xl bg-zinc-950 border-zinc-800 shadow-2xl">
+        <CardContent className="p-6 space-y-6">
+          <div className="space-y-2">
+            <h3 className="text-xl font-medium tracking-tight text-zinc-100">Upload Dataset</h3>
+            <p className="text-sm text-zinc-400">
+              Bring your data in. We accept standard comma-separated values (.csv) format.
+            </p>
+          </div>
+
+          {/* Drag and Drop Zone *
+          <div
+            onDragEnter={handleDrag}
+            onDragOver={handleDrag}
+            onDragLeave={handleDrag}
+            onDrop={handleDrop}
+            onClick={!file ? onButtonClick : undefined}
+            className={`relative border-2 border-dashed rounded-xl p-8 flex flex-col items-center justify-center transition-all duration-200 sequential-container ${
+              !file ? 'cursor-pointer' : 'cursor-default'
+            } ${
+              dragActive 
+                ? 'border-zinc-200 bg-zinc-900/50' 
+                : 'border-zinc-800 bg-zinc-900/20 hover:border-zinc-700 hover:bg-zinc-900/30'
+            }`}
+          >
+            <input
+              ref={fileInputRef}
+              type="file"
+              className="hidden"
+              accept=".csv"
+              onChange={handleFileChange}
+            />
+
+            {!file ? (
+              <div className="text-center space-y-4">
+                <div className="p-3 bg-zinc-900 border border-zinc-800 rounded-lg w-12 h-12 flex items-center justify-center mx-auto shadow-sm">
+                  <FileUp className="w-5 h-5 text-zinc-400" />
+                </div>
+                <div className="space-y-1">
+                  <p className="text-sm font-medium text-zinc-200">
+                    Drag and drop your file here, or <span className="text-white underline underline-offset-4 decoration-zinc-600 hover:decoration-white transition-colors">browse</span>
+                  </p>
+                  <p className="text-xs text-zinc-500">Maximum file size: 50MB</p>
+                </div>
+              </div>
+            ) : (
+              <div className="w-full flex items-center justify-between bg-zinc-900/60 border border-zinc-800 rounded-lg p-4">
+                <div className="flex items-center space-x-3 truncate">
+                  <div className="p-2 bg-black border border-zinc-800 rounded-md shrink-0">
+                    <CheckCircle2 className="w-4 h-4 text-zinc-300" />
+                  </div>
+                  <div className="truncate text-left">
+                    <p className="text-sm font-medium text-zinc-200 truncate">{file.name}</p>
+                    <p className="text-xs text-zinc-500">{(file.size / 1024).toFixed(1)} KB</p>
+                  </div>
+                </div>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    removeFile();
+                  }}
+                  className="text-zinc-400 hover:text-white hover:bg-zinc-800 h-8 w-8 rounded-md"
+                >
+                  <X className="w-4 h-4" />
+                </Button>
+              </div>
+            )}
+          </div>
+
+          {/* Error Message 
+          {error && (
+            <div className="flex items-center space-x-2 text-zinc-400 bg-zinc-950 border border-zinc-800 rounded-lg p-3 text-sm">
+              <AlertCircle className="w-4 h-4 text-white shrink-0" />
+              <span>{error}</span>
+            </div>
+          )}
+
+          {/* Actions *
+          <div className="flex items-center justify-end space-x-3 pt-2">
+            <Button
+              type="button"
+              variant="outline"
+              disabled={!file}
+              onClick={removeFile}
+              className="bg-black border-zinc-800 hover:bg-zinc-900 text-zinc-300 hover:text-white transition-colors"
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              disabled={!file}
+              className="bg-white hover:bg-zinc-200 text-black font-medium transition-colors disabled:opacity-50 disabled:pointer-events-none"
+            >
+              Process File
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </div> */}
