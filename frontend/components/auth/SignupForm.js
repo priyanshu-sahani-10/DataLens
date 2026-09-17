@@ -44,13 +44,19 @@ export default function SignupForm() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <div className="min-h-screen flex items-center justify-center bg-slate-50 relative overflow-hidden">
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: "radial-gradient(ellipse 50% 40% at 50% 30%, rgba(8,145,178,0.1) 0%, transparent 70%)",
+        }}
+      />
       <Navbar showLinks={false}/>
       <form
         onSubmit={handleSubmit}
-        className="bg-white p-8 rounded-xl shadow-md w-full max-w-md"
+        className="relative z-10 bg-white border border-slate-200 p-8 rounded-2xl shadow-xl w-full max-w-md"
       >
-        <h1 className="text-3xl font-bold mb-6 text-center">Create Account</h1>
+        <h1 className="font-display text-3xl font-bold mb-6 text-center text-slate-900">Create Account</h1>
 
         <input
           type="text"
@@ -58,7 +64,7 @@ export default function SignupForm() {
           placeholder="Full Name"
           value={formData.fullName}
           onChange={handleChange}
-          className="w-full border p-3 rounded-lg mb-4"
+          className="w-full bg-slate-50 border border-slate-200 text-slate-900 placeholder:text-slate-400 p-3 rounded-lg mb-4 focus:outline-none focus:border-cyan-500"
           required
         />
 
@@ -68,7 +74,7 @@ export default function SignupForm() {
           placeholder="Email"
           value={formData.email}
           onChange={handleChange}
-          className="w-full border p-3 rounded-lg mb-4"
+          className="w-full bg-slate-50 border border-slate-200 text-slate-900 placeholder:text-slate-400 p-3 rounded-lg mb-4 focus:outline-none focus:border-cyan-500"
           required
         />
 
@@ -78,14 +84,14 @@ export default function SignupForm() {
           placeholder="Password"
           value={formData.password}
           onChange={handleChange}
-          className="w-full border p-3 rounded-lg mb-6"
+          className="w-full bg-slate-50 border border-slate-200 text-slate-900 placeholder:text-slate-400 p-3 rounded-lg mb-6 focus:outline-none focus:border-cyan-500"
           required
         />
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-black text-white p-3 rounded-lg"
+          className="w-full bg-cyan-600 text-white font-semibold p-3 rounded-lg hover:bg-cyan-700 transition shadow-[0_4px_20px_rgba(8,145,178,0.3)] disabled:opacity-50"
         >
           {loading ? "Creating..." : "Signup"}
         </button>

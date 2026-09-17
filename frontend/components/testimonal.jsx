@@ -11,20 +11,20 @@ const testimonials = [
 
 export function TestimonialsSection() {
   return (
-    <section className="bg-black py-28 px-[5%]">
+    <section className="bg-slate-50 py-28 px-[5%]">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="text-center mb-14">
-          <Badge variant="outline" className="border-white/10 text-white/35 bg-white/[0.03] uppercase tracking-widest text-[11px] px-4 py-1 mb-6">
+          <Badge variant="outline" className="border-cyan-200 text-cyan-700 bg-cyan-50 uppercase tracking-widest text-[11px] px-4 py-1 mb-6">
             💬 Testimonials
           </Badge>
           <h2
-            className="text-white font-black mb-4"
-            style={{ fontFamily: "'Syne', sans-serif", fontSize: "clamp(2rem, 4vw, 3rem)" }}
+            className="text-slate-900 font-display font-bold mb-4"
+            style={{ fontSize: "clamp(2rem, 4vw, 3rem)" }}
           >
             Loved by Data Teams Worldwide
           </h2>
-          <p className="text-white/35 max-w-md mx-auto leading-relaxed">
+          <p className="text-slate-600 max-w-md mx-auto leading-relaxed">
             Join thousands of analysts, engineers, and executives who trust Datalytics every day.
           </p>
         </div>
@@ -34,22 +34,21 @@ export function TestimonialsSection() {
           {testimonials.map((t) => (
             <div
               key={t.name}
-              className="bg-[#080808] border border-white/[0.06] rounded-2xl p-7 hover:border-white/[0.14] hover:-translate-y-1 hover:bg-white/[0.025] transition-all duration-300"
+              className="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm hover:border-cyan-300 hover:-translate-y-1 hover:shadow-md transition-all duration-300"
             >
-              <div className="text-white/20 text-sm tracking-[3px] mb-5">★★★★★</div>
-              <p className="text-white/40 text-sm leading-relaxed italic mb-6">"{t.quote}"</p>
+              <div className="text-amber-400 text-sm tracking-[3px] mb-5">★★★★★</div>
+              <p className="text-slate-600 text-sm leading-relaxed italic mb-6">&ldquo;{t.quote}&rdquo;</p>
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-white/[0.07] border border-white/[0.1] flex items-center justify-center flex-shrink-0">
+                <div className="w-9 h-9 rounded-full bg-cyan-100 border border-cyan-200 flex items-center justify-center flex-shrink-0">
                   <span
-                    className="text-white/50 text-xs font-bold"
-                    style={{ fontFamily: "'Syne', sans-serif" }}
+                    className="text-cyan-800 text-xs font-bold font-display"
                   >
                     {t.initials}
                   </span>
                 </div>
                 <div>
-                  <p className="text-white text-sm font-semibold" style={{ fontFamily: "'Syne', sans-serif" }}>{t.name}</p>
-                  <p className="text-white/25 text-xs">{t.role}</p>
+                  <p className="text-slate-900 text-sm font-semibold font-display">{t.name}</p>
+                  <p className="text-slate-500 text-xs">{t.role}</p>
                 </div>
               </div>
             </div>
