@@ -15,7 +15,7 @@ def get_data_quality(df: pd.DataFrame):
             "percent": round(
                 (missing / rows) * 100,
                 2
-            )
+            ) if rows else 0.0
         })
 
     return result

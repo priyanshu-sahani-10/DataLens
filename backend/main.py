@@ -9,6 +9,14 @@ from app.api.v1.routes.analysis import router as analysis_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    # Verify DB connectivity at startup, then create tables.
+    try:
+        async with engine.connect() as connection:
+            await connection.execute(text("SELECT 1"))
+        print("✅ Database connected successfully")
+    except Exception as e:
+        print("❌ Database connection failed")
+        print(e)
     await init_db()
     yield
 
@@ -16,20 +24,10 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     lifespan=lifespan
 )
-@app.on_event("startup")
-async def connect_to_db():
-    try:
-        async with engine.connect() as connection:
-            await connection.execute(text("SELECT 1"))
-
-        print("✅ Database connected successfully")
-
-    except Exception as e:
-        print("❌ Database connection failed")
-        print(e)
 
 origins = [
     "http://localhost:3000",
+    "http://127.0.0.1:3000",
 ]
 
 

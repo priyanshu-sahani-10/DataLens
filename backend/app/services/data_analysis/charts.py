@@ -8,8 +8,12 @@ def get_histograms(df):
     print("Charts ... ")
 
     for col in num_cols:
+        series = df[col].dropna()
+        if series.empty:
+            result[col] = []
+            continue
         counts, bins = np.histogram(
-            df[col].dropna(),
+            series,
             bins=10
         )
 
@@ -31,7 +35,7 @@ def get_category_bars(df):
     ).columns
 
     for col in cat_cols:
-        vc = df[col].value_counts()
+        vc = df[col].value_counts().head(20)
 
         result[col] = [
             {
@@ -50,30 +54,30 @@ def get_scatter_plots(df):
     result = {}
 
     num_cols = list(
-        df.select_dtypes(include=np.number).columns
+        df.select_dtypes(include=np.number).columns[:6]
     )
 
     for x, y in combinations(num_cols, 2):
+        if len(result) >= 10:
+            break
         key = f"{x}_vs_{y}"
 
+        sampled = df[[x, y]].dropna().head(500)
         result[key] = [
             {
                 "x": float(row[x]),
                 "y": float(row[y])
             }
-            for _, row in df[[x, y]]
-            .dropna()
-            .iterrows()
+            for _, row in sampled.iterrows()
         ]
 
     return result
 
 def get_heatmap(df):
-    corr = (
-        df.select_dtypes(include=np.number)
-        .corr()
-        .fillna(0)
-    )
+    numeric = df.select_dtypes(include=np.number)
+    if numeric.shape[1] == 0:
+        return []
+    corr = numeric.corr().fillna(0)
 
     result = []
 
@@ -93,12 +97,22 @@ def get_boxplots(df):
     num_cols = df.select_dtypes(include=np.number).columns
 
     for col in num_cols:
+        series = df[col].dropna()
+        if series.empty:
+            result[col] = {
+                "min": 0.0,
+                "q1": 0.0,
+                "median": 0.0,
+                "q3": 0.0,
+                "max": 0.0
+            }
+            continue
         result[col] = {
-            "min": float(df[col].min()),
-            "q1": float(df[col].quantile(0.25)),
-            "median": float(df[col].median()),
-            "q3": float(df[col].quantile(0.75)),
-            "max": float(df[col].max())
+            "min": float(series.min()),
+            "q1": float(series.quantile(0.25)),
+            "median": float(series.median()),
+            "q3": float(series.quantile(0.75)),
+            "max": float(series.max())
         }
 
     return result

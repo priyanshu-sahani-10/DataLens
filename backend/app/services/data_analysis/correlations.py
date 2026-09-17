@@ -5,6 +5,12 @@ def get_correlations(df: pd.DataFrame):
     numeric = df.select_dtypes(include=np.number)
     print("Correlation ...")
 
+    if numeric.shape[1] < 2:
+        return {
+            "matrix": numeric.corr().fillna(0).to_dict() if numeric.shape[1] else {},
+            "strong_relationships": []
+        }
+
     corr = numeric.corr()
     strong = []
     cols = corr.columns
@@ -12,6 +18,8 @@ def get_correlations(df: pd.DataFrame):
     for i in range(len(cols)):
         for j in range(i + 1, len(cols)):
             value = corr.iloc[i, j]
+            if pd.isna(value):
+                continue
 
             if abs(value) >= 0.7:
                 strong.append({

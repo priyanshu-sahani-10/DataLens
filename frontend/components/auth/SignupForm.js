@@ -56,7 +56,7 @@ export default function SignupForm() {
           type="text"
           name="fullName"
           placeholder="Full Name"
-          value={formData.full_name}
+          value={formData.fullName}
           onChange={handleChange}
           className="w-full border p-3 rounded-lg mb-4"
           required

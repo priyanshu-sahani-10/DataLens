@@ -12,7 +12,7 @@ class User(Base):
     )
 
     fullName: Mapped[str] = mapped_column(
-        String(20) , 
+        String(100) , 
         nullable=False
     )
 

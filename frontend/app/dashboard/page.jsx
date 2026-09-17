@@ -13,20 +13,20 @@ export default function DashboardPage() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await api.get("/auth/me");
+
+        setUser(response.data);
+      } catch (error) {
+        removeToken();
+
+        router.push("/login");
+      }
+    };
+
     fetchUser();
-  }, []);
-
-  const fetchUser = async () => {
-    try {
-      const response = await api.get("/auth/me");
-
-      setUser(response.data);
-    } catch (error) {
-      removeToken();
-
-      router.push("/login");
-    }
-  };
+  }, [router]);
 
   const handleLogout = () => {
     removeToken();
@@ -49,7 +49,7 @@ export default function DashboardPage() {
       </h1>
 
       <p className="mb-2">
-        Name: {user.full_name}
+        Name: {user.fullName}
       </p>
 
       <p className="mb-6">

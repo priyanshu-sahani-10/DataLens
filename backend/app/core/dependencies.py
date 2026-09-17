@@ -19,9 +19,14 @@ async def get_current_user(
     if not payload:
         raise HTTPException(
             status_code = status.HTTP_401_UNAUTHORIZED , 
-            details = "Invalid Token"
+            detail = "Invalid Token"
         )
     email = payload.get("sub")
+    if not email:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid token payload"
+        )
     user = await get_user_by_email(email=email , db = db)
      
     if not user:

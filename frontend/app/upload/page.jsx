@@ -262,7 +262,7 @@ export default function DatasetDashboard() {
                   </p>
 
                   <h2 className="text-4xl font-bold text-white mt-2 tracking-tight">
-                    {data.overview.rows.toLocaleString()}
+                    {(overview.rows ?? 0).toLocaleString()}
                   </h2>
 
                   <div className="mt-4 h-px bg-gradient-to-r from-blue-500/40 to-transparent" />
@@ -289,7 +289,7 @@ export default function DatasetDashboard() {
                   </p>
 
                   <h2 className="text-4xl font-bold text-white mt-2 tracking-tight">
-                    {data.overview.columns.toLocaleString()}
+                    {(overview.columns ?? 0).toLocaleString()}
                   </h2>
 
                   <div className="mt-4 h-px bg-gradient-to-r from-purple-500/40 to-transparent" />
@@ -316,7 +316,7 @@ export default function DatasetDashboard() {
                   </p>
 
                   <h2 className="text-4xl font-bold text-white mt-2 tracking-tight">
-                    {data.overview.missing_values.toLocaleString()}
+                    {(overview.missing_values ?? 0).toLocaleString()}
                   </h2>
 
                   <div className="mt-4 h-px bg-gradient-to-r from-amber-500/40 to-transparent" />
@@ -343,7 +343,7 @@ export default function DatasetDashboard() {
                   </p>
 
                   <h2 className="text-4xl font-bold text-white mt-2 tracking-tight">
-                    {data.overview.duplicate_rows.toLocaleString()}
+                    {(overview.duplicate_rows ?? 0).toLocaleString()}
                   </h2>
 
                   <div className="mt-4 h-px bg-gradient-to-r from-emerald-500/40 to-transparent" />
@@ -951,38 +951,50 @@ export default function DatasetDashboard() {
                 </CardHeader>
                 <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   {Object.entries(charts.outlier_boxplots || {}).map(
-                    ([col, box]) => (
-                      <div
-                        key={col}
-                        className="p-4 border border-zinc-800 rounded-lg flex flex-col items-center"
-                      >
-                        <h4 className="mb-4 text-sm font-semibold">{col}</h4>
-                        <div className="relative w-full h-8 flex items-center px-4">
-                          {/* Whisker Line */}
-                          <div className="absolute left-4 right-4 h-px bg-zinc-600 top-1/2" />
-                          {/* Box (Q1 to Q3) */}
-                          <div
-                            className="absolute h-full bg-zinc-800 border-2 border-white top-0"
-                            style={{
-                              left: `${((box.q1 - box.min) / (box.max - box.min)) * 100}%`,
-                              width: `${((box.q3 - box.q1) / (box.max - box.min)) * 100}%`,
-                            }}
-                          >
-                            {/* Median Line */}
+                    ([col, box]) => {
+                      const span = box.max - box.min || 1;
+                      const boxWidth = Math.max(
+                        ((box.q3 - box.q1) / span) * 100,
+                        box.q3 > box.q1 ? 2 : 0
+                      );
+                      const boxLeft = ((box.q1 - box.min) / span) * 100;
+                      const medianLeft =
+                        box.q3 > box.q1
+                          ? ((box.median - box.q1) / (box.q3 - box.q1)) * 100
+                          : 50;
+                      return (
+                        <div
+                          key={col}
+                          className="p-4 border border-zinc-800 rounded-lg flex flex-col items-center"
+                        >
+                          <h4 className="mb-4 text-sm font-semibold">{col}</h4>
+                          <div className="relative w-full h-8 flex items-center px-4">
+                            {/* Whisker Line */}
+                            <div className="absolute left-4 right-4 h-px bg-zinc-600 top-1/2" />
+                            {/* Box (Q1 to Q3) */}
                             <div
-                              className="absolute w-1 bg-white h-full top-0"
+                              className="absolute h-full bg-zinc-800 border-2 border-white top-0"
                               style={{
-                                left: `${((box.median - box.q1) / (box.q3 - box.q1)) * 100}%`,
+                                left: `${boxLeft}%`,
+                                width: `${boxWidth}%`,
                               }}
-                            />
+                            >
+                              {/* Median Line */}
+                              <div
+                                className="absolute w-1 bg-white h-full top-0"
+                                style={{
+                                  left: `${medianLeft}%`,
+                                }}
+                              />
+                            </div>
+                          </div>
+                          <div className="w-full flex justify-between text-xs text-zinc-500 mt-2">
+                            <span>{formatNum(box.min)} (Min)</span>
+                            <span>{formatNum(box.max)} (Max)</span>
                           </div>
                         </div>
-                        <div className="w-full flex justify-between text-xs text-zinc-500 mt-2">
-                          <span>{formatNum(box.min)} (Min)</span>
-                          <span>{formatNum(box.max)} (Max)</span>
-                        </div>
-                      </div>
-                    ),
+                      );
+                    }
                   )}
                 </CardContent>
               </Card>
@@ -1180,7 +1192,7 @@ function OverviewCard({ title, value }) {
       </CardHeader>
       <CardContent>
         <div className="text-3xl font-bold text-white">
-          {value.toLocaleString()}
+          {typeof value === "number" ? value.toLocaleString() : (value ?? "—")}
         </div>
       </CardContent>
     </Card>
