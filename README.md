@@ -1,4 +1,4 @@
-# 🚀 DataLens AI
+# 📊 DataLens
 
 <div align="center">
 
@@ -19,7 +19,7 @@
 
 ## 📖 Overview
 
-**DataLens AI** is a modern web-based platform that transforms raw CSV datasets into interactive dashboards, statistical reports, and actionable insights.
+**DataLens** is a modern web-based platform that transforms raw CSV datasets into interactive dashboards, statistical reports, and actionable insights.
 
 Instead of manually writing exploratory data analysis (EDA) code, users can simply upload a dataset and receive comprehensive analysis within seconds.
 
@@ -41,6 +41,17 @@ The platform is designed for:
 - File validation
 - Secure authenticated uploads
 - Large dataset support
+
+---
+
+## 🧹 One-Click Data Cleaning
+
+- Drop sparse columns (≥40% missing)
+- Drop constant columns
+- Remove duplicate rows
+- Median / mode imputation
+- Before → after report with full re-analysis
+- Download cleaned CSV
 
 ---
 
@@ -313,6 +324,8 @@ http://localhost:3000
 | Method | Endpoint | Description |
 |---------|----------|-------------|
 | POST | `/api/v1/analysis/upload` | Upload CSV |
+| POST | `/api/v1/analysis/clean` | Clean CSV + re-analyze |
+| POST | `/api/v1/analysis/clean/download` | Download cleaned CSV |
 | GET | `/api/v1/dataset/{id}/overview` | Dataset Overview |
 | GET | `/api/v1/dataset/{id}/missing` | Missing Values |
 | GET | `/api/v1/dataset/{id}/correlation` | Correlation Analysis |

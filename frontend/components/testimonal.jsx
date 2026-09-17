@@ -2,7 +2,7 @@ import { Badge } from "@/components/ui/badge";
 
 const testimonials = [
   { quote: "We replaced three separate BI tools with Datalytics. Reporting time dropped from days to hours and dashboards look good enough to present to the board.", name: "Sarah Reynolds", role: "Head of Data, Vercel", initials: "SR" },
-  { quote: "The AI Query Assistant is genuinely magical. Product managers now answer their own data questions without filing tickets — that alone paid for the subscription 10x.", name: "Marcus Kim", role: "VP Engineering, Stripe", initials: "MK" },
+  { quote: "The Key Findings panel is genuinely useful. Product managers now spot data quality issues themselves without filing tickets — that alone paid for the subscription 10x.", name: "Marcus Kim", role: "VP Engineering, Stripe", initials: "MK" },
   { quote: "Real-time dashboards with sub-second latency on 50 million events per day. I didn't think that was possible at this price point. Datalytics proved me wrong.", name: "Aisha Patel", role: "Data Architect, Shopify", initials: "AP" },
   { quote: "Onboarding took less than a day. We connected Snowflake, Salesforce, and Stripe before lunch and had our first revenue dashboard live by EOD.", name: "Tom Nguyen", role: "Analytics Lead, Linear", initials: "TN" },
   { quote: "Predictive modeling caught a churn spike two weeks early. We ran a re-engagement campaign and saved over $200K in ARR. The ROI is insane.", name: "Julia Larson", role: "Growth Director, Notion", initials: "JL" },

@@ -5,6 +5,7 @@ import {
   UploadCloud,
   FileText,
   AlertCircle,
+  AlertOctagon,
   Loader2,
   Database,
   Columns3,
@@ -14,6 +15,12 @@ import {
   BarChart3,
   Network,
   LineChart,
+  Info,
+  Sparkles,
+  Eraser,
+  Download,
+  RotateCcw,
+  CheckCircle2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -26,7 +33,7 @@ import {
 } from "@/components/ui/card";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
-import { analyzeCSV } from "@/lib/analyze";
+import { analyzeCSV, cleanDataset, downloadCleanedCSV } from "@/lib/analyze";
 
 import {
   Table,
@@ -62,11 +69,64 @@ const formatNum = (num) =>
       : num.toFixed(2)
     : num;
 
+// Severity styling for auto-generated insights
+const INSIGHT_STYLES = {
+  critical: {
+    box: "border-red-200 bg-red-50",
+    icon: AlertOctagon,
+    iconColor: "text-red-600",
+  },
+  warning: {
+    box: "border-amber-200 bg-amber-50",
+    icon: AlertTriangle,
+    iconColor: "text-amber-600",
+  },
+  info: {
+    box: "border-cyan-200 bg-cyan-50",
+    icon: Info,
+    iconColor: "text-cyan-700",
+  },
+};
+
+// Cleaning actions offered in the "Clean My Data" panel
+const CLEANING_ACTIONS = [
+  {
+    id: "drop_sparse",
+    label: "Drop sparse columns",
+    desc: "Remove columns ≥40% missing (same bar Key Findings flags)",
+  },
+  {
+    id: "drop_constant",
+    label: "Drop constant columns",
+    desc: "Remove zero-variance columns with no signal",
+  },
+  {
+    id: "deduplicate",
+    label: "Remove duplicates",
+    desc: "Drop exact duplicate rows",
+  },
+  {
+    id: "impute",
+    label: "Fill missing values",
+    desc: "Median for numbers, mode for categories",
+  },
+];
+
 export default function DatasetDashboard() {
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState(null);
   const [error, setError] = useState("");
+  const [cleanActions, setCleanActions] = useState([
+    "drop_sparse",
+    "drop_constant",
+    "deduplicate",
+  ]);
+  const [cleaning, setCleaning] = useState(false);
+  const [downloading, setDownloading] = useState(false);
+  const [cleanReport, setCleanReport] = useState(null);
+  const [originalData, setOriginalData] = useState(null);
+  const [isCleanView, setIsCleanView] = useState(false);
 
   const {
     overview = {},
@@ -78,6 +138,7 @@ export default function DatasetDashboard() {
     distribution = {},
     correlations = { strong_relationships: [] },
     feature_importance = [],
+    insights = [],
     preview = [],
     charts = {
       histograms: {},
@@ -120,6 +181,9 @@ export default function DatasetDashboard() {
     try {
       setLoading(true);
       setError("");
+      setCleanReport(null);
+      setOriginalData(null);
+      setIsCleanView(false);
 
       const result = await analyzeCSV(file);
 
@@ -128,6 +192,70 @@ export default function DatasetDashboard() {
       setError(err?.response?.data?.detail || "Failed to analyze dataset");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const toggleCleanAction = (id) => {
+    setCleanActions((prev) =>
+      prev.includes(id) ? prev.filter((a) => a !== id) : [...prev, id]
+    );
+  };
+
+  const handleApplyCleaning = async () => {
+    if (!file || cleanActions.length === 0) return;
+
+    try {
+      setCleaning(true);
+      setError("");
+
+      const result = await cleanDataset(file, cleanActions);
+
+      if (!isCleanView) {
+        setOriginalData(data);
+      }
+      setData(result.analysis);
+      setCleanReport({
+        report: result.cleaning_report,
+        before: result.before,
+        after: result.after,
+      });
+      setIsCleanView(true);
+    } catch (err) {
+      setError(err?.response?.data?.detail || "Failed to clean dataset");
+    } finally {
+      setCleaning(false);
+    }
+  };
+
+  const handleRevertCleaning = () => {
+    if (originalData) {
+      setData(originalData);
+    }
+    setOriginalData(null);
+    setCleanReport(null);
+    setIsCleanView(false);
+  };
+
+  const handleDownloadClean = async () => {
+    if (!file || cleanActions.length === 0) return;
+
+    try {
+      setDownloading(true);
+      setError("");
+
+      const blob = await downloadCleanedCSV(file, cleanActions);
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `cleaned_${file.name}`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      setError(err?.response?.data?.detail || "Failed to download cleaned CSV");
+    } finally {
+      setDownloading(false);
     }
   };
 
@@ -351,6 +479,192 @@ export default function DatasetDashboard() {
               </Card>
             </div>
           </div>
+
+          {insights.length > 0 && (
+            <Card className="bg-white border-slate-200 shadow-sm">
+              <CardHeader>
+                <CardTitle className="font-display flex items-center gap-2">
+                  <Sparkles className="h-5 w-5 text-cyan-600" />
+                  Key Findings
+                  <span className="ml-1 text-xs font-sans font-semibold bg-cyan-100 text-cyan-800 px-2.5 py-0.5 rounded-full">
+                    {insights.length} auto-generated
+                  </span>
+                </CardTitle>
+                <CardDescription>
+                  Plain-English insights detected in your data, ordered by severity
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {insights.map((ins, idx) => {
+                  const style =
+                    INSIGHT_STYLES[ins.severity] || INSIGHT_STYLES.info;
+                  const Icon = style.icon;
+                  return (
+                    <div
+                      key={`${ins.category}-${idx}`}
+                      className={`flex gap-3 p-4 rounded-xl border ${style.box}`}
+                    >
+                      <Icon className={`h-5 w-5 flex-shrink-0 mt-0.5 ${style.iconColor}`} />
+                      <div className="min-w-0">
+                        <p className="font-semibold text-sm text-slate-900">
+                          {ins.title}
+                        </p>
+                        <p className="text-sm text-slate-600 mt-1 leading-relaxed">
+                          {ins.message}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </CardContent>
+            </Card>
+          )}
+
+          {data && !isCleanView && (
+            <Card className="bg-white border-slate-200 shadow-sm">
+              <CardHeader>
+                <CardTitle className="font-display flex items-center gap-2">
+                  <Eraser className="h-5 w-5 text-cyan-600" />
+                  Clean My Data
+                </CardTitle>
+                <CardDescription>
+                  Apply analyst-standard cleaning, then re-analyze the result
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {CLEANING_ACTIONS.map((action) => (
+                    <label
+                      key={action.id}
+                      className={`flex items-start gap-3 p-4 rounded-xl border cursor-pointer transition-colors ${
+                        cleanActions.includes(action.id)
+                          ? "border-cyan-500 bg-cyan-50"
+                          : "border-slate-200 bg-white hover:border-slate-300"
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={cleanActions.includes(action.id)}
+                        onChange={() => toggleCleanAction(action.id)}
+                        className="mt-1 h-4 w-4 accent-cyan-600"
+                      />
+                      <span>
+                        <span className="block text-sm font-semibold text-slate-900">
+                          {action.label}
+                        </span>
+                        <span className="block text-xs text-slate-500 mt-0.5">
+                          {action.desc}
+                        </span>
+                      </span>
+                    </label>
+                  ))}
+                </div>
+                <div className="flex flex-wrap gap-3">
+                  <Button
+                    onClick={handleApplyCleaning}
+                    disabled={cleaning || cleanActions.length === 0}
+                    className="bg-cyan-600 text-white hover:bg-cyan-700 font-semibold disabled:opacity-50"
+                  >
+                    {cleaning ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Cleaning...
+                      </>
+                    ) : (
+                      "Apply cleaning & re-analyze"
+                    )}
+                  </Button>
+                  <Button
+                    onClick={handleDownloadClean}
+                    disabled={downloading || cleanActions.length === 0}
+                    variant="outline"
+                    className="border-slate-300 text-slate-700 hover:text-cyan-700 hover:border-cyan-400 hover:bg-cyan-50 disabled:opacity-50"
+                  >
+                    {downloading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Preparing...
+                      </>
+                    ) : (
+                      <>
+                        <Download className="mr-2 h-4 w-4" />
+                        Download cleaned CSV
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {cleanReport && isCleanView && (
+            <Card className="bg-white border-slate-200 shadow-sm">
+              <CardHeader>
+                <CardTitle className="font-display flex items-center gap-2">
+                  <CheckCircle2 className="h-5 w-5 text-green-600" />
+                  Cleaning Report
+                  <span className="ml-1 text-xs font-sans font-semibold bg-green-100 text-green-800 px-2.5 py-0.5 rounded-full">
+                    viewing cleaned data
+                  </span>
+                </CardTitle>
+                <CardDescription>
+                  {cleanReport.before.rows.toLocaleString()} →{" "}
+                  {cleanReport.after.rows.toLocaleString()} rows ·{" "}
+                  {cleanReport.before.columns} → {cleanReport.after.columns}{" "}
+                  columns · {cleanReport.before.missing_values.toLocaleString()}{" "}
+                  → {cleanReport.after.missing_values.toLocaleString()} missing
+                  values
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {cleanReport.report.map((item) => (
+                  <div
+                    key={item.action}
+                    className="flex gap-3 p-4 rounded-xl border border-slate-200 bg-slate-50"
+                  >
+                    <CheckCircle2 className="h-5 w-5 flex-shrink-0 mt-0.5 text-green-600" />
+                    <div className="min-w-0">
+                      <p className="font-semibold text-sm text-slate-900">
+                        {item.description}
+                      </p>
+                      {item.affected_columns.length > 0 && (
+                        <p className="text-xs text-slate-500 mt-1">
+                          {item.affected_columns.join(", ")}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                ))}
+                <div className="flex flex-wrap gap-3 pt-1">
+                  <Button
+                    onClick={handleDownloadClean}
+                    disabled={downloading}
+                    className="bg-cyan-600 text-white hover:bg-cyan-700 font-semibold disabled:opacity-50"
+                  >
+                    {downloading ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Preparing...
+                      </>
+                    ) : (
+                      <>
+                        <Download className="mr-2 h-4 w-4" />
+                        Download cleaned CSV
+                      </>
+                    )}
+                  </Button>
+                  <Button
+                    onClick={handleRevertCleaning}
+                    variant="outline"
+                    className="border-slate-300 text-slate-700 hover:text-cyan-700 hover:border-cyan-400 hover:bg-cyan-50"
+                  >
+                    <RotateCcw className="mr-2 h-4 w-4" />
+                    Back to original data
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           <Tabs defaultValue="preview" className="w-full">
             <TabsList className="w-full mb-70 xs:mb-50 sm:mb-40 lg:mb-20 h-auto bg-white border border-slate-200 shadow-sm backdrop-blur-2xl  p-2 flex flex-wrap gap-2">

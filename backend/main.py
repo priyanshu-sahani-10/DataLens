@@ -54,5 +54,5 @@ app.include_router(
 @app.get("/")
 async def root():
     return {
-        "message": "DataLens AI Backend Running"
+        "message": "DataLens Backend Running"
     }

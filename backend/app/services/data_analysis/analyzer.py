@@ -6,6 +6,7 @@ from .categorical import get_categorical_analysis
 from .outliers import get_outliers
 from .distribution import get_distribution
 from .correlations import get_correlations
+from .insights import get_insights
 from .feature_importance import (
     get_feature_importance
 )
@@ -33,21 +34,38 @@ def analyze_dataset(df):
         get_distribution(df)
     )
 
+    overview = get_overview(df)
+    data_quality = get_data_quality(df)
+    basic_summary = get_basic_summary(df)
+    numerical_analysis = get_numerical_analysis(df)
+    categorical_analysis = get_categorical_analysis(df)
+
+    insights = get_insights(
+        df,
+        overview=overview,
+        data_quality=data_quality,
+        correlations=correlations,
+        distribution=distribution,
+        outliers=outliers,
+        categorical_analysis=categorical_analysis,
+        numerical_analysis=numerical_analysis,
+    )
+
     return {
         "overview":
-            get_overview(df),
+            overview,
 
         "data_quality":
-            get_data_quality(df),
+            data_quality,
 
         "basic_summary":
-            get_basic_summary(df),
+            basic_summary,
 
         "numerical_analysis":
-            get_numerical_analysis(df),
+            numerical_analysis,
 
         "categorical_analysis":
-            get_categorical_analysis(df),
+            categorical_analysis,
 
         "outliers":
             outliers,
@@ -60,6 +78,9 @@ def analyze_dataset(df):
 
         "feature_importance":
             feature_importance,
+
+        "insights":
+            insights,
 
         "preview":
             df.head(10)

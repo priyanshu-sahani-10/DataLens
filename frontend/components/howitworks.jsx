@@ -19,8 +19,8 @@ const steps = [
   },
   {
     n: "04",
-    title: "Ask questions",
-    desc: "Ask questions in plain English and get insights instantly. Query your data without SQL and uncover answers in seconds.",
+    title: "Get key findings",
+    desc: "Receive plain-English findings automatically — missing data, correlations, outliers, and skewed columns explained in seconds.",
   },
 ];
 

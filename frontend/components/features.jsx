@@ -50,8 +50,8 @@ const features = [
         <path d="M11 3l2 6h6l-5 3.5 2 6L11 15l-5 3.5 2-6L3 9h6z" stroke="#0891b2" strokeWidth="1.3" strokeLinejoin="round"/>
       </svg>
     ),
-    title: "Ask Questions in Plain English",
-    desc: "Query your data using natural language. Instantly get answers, summaries, and insights without SQL or technical knowledge.",
+    title: "Plain-English Summaries",
+    desc: "Every upload produces a Key Findings panel — missing data, correlations, outliers, and skewed columns explained in plain language.",
   },
   {
     icon: (
@@ -60,8 +60,8 @@ const features = [
         <circle cx="11" cy="11" r="3" stroke="#0891b2" strokeWidth="1.5"/>
       </svg>
     ),
-    title: "AI Recommendations",
-    desc: "Go beyond insights. Get actionable suggestions on what to improve, optimize, or investigate based on your data.",
+    title: "Smart Recommendations",
+    desc: "Go beyond insights. Get clear next steps on what to drop, impute, or investigate — generated automatically from your data.",
   },
 ];
 

@@ -19,7 +19,7 @@ export function UploadCTA() {
         </h2>
 
         <p className="text-slate-600 max-w-xl mx-auto mb-10">
-          Upload your CSV and get instant insights, visualizations, and AI-powered answers in seconds.
+          Upload your CSV and get instant insights, visualizations, and plain-English summaries in seconds.
         </p>
 
         <button

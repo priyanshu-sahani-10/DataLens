@@ -50,6 +50,31 @@ class FeatureImportanceSchema(BaseModel):
     feature: str
     importance: float
 
+class InsightSchema(BaseModel):
+    severity: str  # critical | warning | info
+    category: str
+    title: str
+    message: str
+
+class CleaningActionReportSchema(BaseModel):
+    action: str
+    description: str
+    affected_columns: List[str] = []
+    rows_affected: int = 0
+
+class DatasetShapeSchema(BaseModel):
+    rows: int
+    columns: int
+    missing_values: int
+
+class DataCleaningResponseSchema(BaseModel):
+    cleaning_report: List[
+        CleaningActionReportSchema
+    ]
+    before: DatasetShapeSchema
+    after: DatasetShapeSchema
+    analysis: "DatasetAnalysisResponseSchema"
+
 class PreviewRowSchema(BaseModel):
     model_config = {
         "extra": "allow"
@@ -157,8 +182,15 @@ class DatasetAnalysisResponseSchema(BaseModel):
         FeatureImportanceSchema
     ]
 
+    insights: List[
+        InsightSchema
+    ]
+
     preview: List[
         Dict[str, Any]
     ]
 
     charts: ChartDataSchema
+
+
+DataCleaningResponseSchema.model_rebuild()
